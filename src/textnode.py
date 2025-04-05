@@ -2,6 +2,7 @@
 
 from enum import Enum
 
+
 class TextType(Enum):
     NORMAL = "text"
     BOLD = "bold"
@@ -9,6 +10,7 @@ class TextType(Enum):
     CODE = "code"
     LINK = "link"
     IMAGE = "image"
+
 
 """
 def find_text_type(text_type):
@@ -34,4 +36,3 @@ class TextNode:
 
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
-

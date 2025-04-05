@@ -4,6 +4,7 @@ import unittest
 # application imports
 from textnode import TextNode, TextType
 
+
 class TestTextNode(unittest.TestCase):
     # Text String and Text Type test cases
     def test_text_and_type_equal(self):
