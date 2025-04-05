@@ -1,7 +1,7 @@
-#! /usr/bin/python3
-
+# python imports
 import unittest
 
+# application imports
 from textnode import TextNode, TextType
 
 class TestTextNode(unittest.TestCase):
