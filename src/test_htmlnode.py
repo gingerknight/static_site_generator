@@ -44,7 +44,6 @@ class TestLeafNode(unittest.TestCase):
         leaf_node = LeafNode("p", "I'm a paragraph")
         self.assertEqual(leaf_node.tag, "p")
         self.assertEqual(leaf_node.value, "I'm a paragraph")
-        self.assertEqual(leaf_node.children, [])
 
     def test_leafnode_to_html_p(self):
         leaf_node = LeafNode("p", "I'm a paragraph")
@@ -52,12 +51,12 @@ class TestLeafNode(unittest.TestCase):
 
     def test_leafnode_to_html_a(self):
         prop_dict = {"href":"https://www.google.com", "target":"_blank"}
-        leaf_node = LeafNode("a", "Click Me Damnit!", None, prop_dict)
+        leaf_node = LeafNode("a", "Click Me Damnit!", prop_dict)
         self.assertEqual(leaf_node.to_html(), "<a href=\"https://www.google.com\" target=\"_blank\">Click Me Damnit!</a>")
 
     def test_leafnode_no_value(self):
         with self.assertRaises(ValueError):
-            LeafNode("p", None, None, None)
+            LeafNode("p", None)
 
     def test_leaf_to_html_no_tag(self):
         leaf_node = LeafNode(None, "Hello, world!")
