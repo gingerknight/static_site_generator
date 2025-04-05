@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 from enum import Enum
+from htmlnode import LeafNode
 
 
 class TextType(Enum):
@@ -10,16 +11,6 @@ class TextType(Enum):
     CODE = "code"
     LINK = "link"
     IMAGE = "image"
-
-
-"""
-def find_text_type(text_type):
-    for txt_type in TextType:
-        if txt_type.value == text_type:
-            if isinstance(txt_type, str):
-                return txt_type
-"""
-
 
 class TextNode:
     def __init__(self, text, text_type, url=None):
@@ -36,3 +27,31 @@ class TextNode:
 
     def __repr__(self):
         return f"TextNode({self.text}, {self.text_type.value}, {self.url})"
+
+
+def text_node_to_html_node(text_node: TextNode):
+    # convert TextNode to HTMLNode --> LeafNode
+    """
+    It should handle each type of the TextType enum. 
+    If it gets a TextNode that is none of those types, it should raise an exception. 
+    Otherwise, it should return a new LeafNode object.
+
+    TextType.TEXT: This should return a LeafNode with no tag, just a raw text value.
+    TextType.BOLD: This should return a LeafNode with a "b" tag and the text
+    TextType.ITALIC: "i" tag, text
+    TextType.CODE: "code" tag, text
+    TextType.LINK: "a" tag, anchor text, and "href" prop
+    TextType.IMAGE: "img" tag, empty string value, "src" and "alt" props ("src" is the image URL, "alt" is the alt text)
+    """
+    if text_node.text_type.value == "text":
+        return LeafNode(None, text_node.text)
+    if text_node.text_type.value == "bold":
+        return LeafNode("b", text_node.text)
+    if text_node.text_type.value == "italic":
+        return LeafNode("i", text_node.text)
+    if text_node.text_type.value == "code":
+        return LeafNode("code", text_node.text)
+    if text_node.text_type.value == "link":
+        return LeafNode("a", text_node.text, {"href":text_node.url})
+    if text_node.text_type.value == "image":
+        return LeafNode("img", "", {"src":text_node.url, "alt":text_node.text})
