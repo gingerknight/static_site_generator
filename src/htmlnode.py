@@ -1,3 +1,8 @@
+# python imports
+
+# application imports
+
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag  # "p", "a", "h1", etc
@@ -30,10 +35,7 @@ class HTMLNode:
         """print an HTMLNode object and see its tag, value, children, and props.
         This will be useful for your debugging.
         """
-        return (
-            f"HTMLNode(tag={self.tag}, value={self.value}, "
-            f"children={self.children}, props={self.props})"
-        )
+        return f"HTMLNode(tag={self.tag}, value={self.value}, " f"children={self.children}, props={self.props})"
 
 
 class LeafNode(HTMLNode):
@@ -71,6 +73,4 @@ class ParentNode(HTMLNode):
 
     def __repr__(self):
         # Optional but helpful for debugging
-        return (
-            f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
-        )
+        return f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
