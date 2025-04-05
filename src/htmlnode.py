@@ -34,3 +34,23 @@ class HTMLNode:
             f"children={self.children}, props={self.props})"
         )
     
+class LeafNode(HTMLNode):
+    def __init__(self, tag, value, children=None, props=None):
+        if children and children != []:
+            raise ValueError("LeafNode cannot have children")
+        if value is None:
+            raise ValueError("Invalid HTML: no value")
+        super().__init__(tag, value, children=[], props=props)
+
+    def to_html(self):
+        if self.tag is None:
+            return f"{self.value}"
+        # h1-h6, p, b, etc (no link) should not have props
+        # with props (for our current stuff should be like href, a)
+        if self.props:
+            prop_string = super().props_to_html()
+            return f"<{self.tag}{prop_string}>{self.value}</{self.tag}>"
+        return f"<{self.tag}>{self.value}</{self.tag}>"
+    
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
