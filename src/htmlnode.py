@@ -35,7 +35,7 @@ class HTMLNode:
         """print an HTMLNode object and see its tag, value, children, and props.
         This will be useful for your debugging.
         """
-        return f"HTMLNode(tag={self.tag}, value={self.value}, " f"children={self.children}, props={self.props})"
+        return f"HTMLNode(tag={self.tag}, value={self.value}, children={self.children}, props={self.props})"
 
 
 class LeafNode(HTMLNode):

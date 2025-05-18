@@ -2,9 +2,10 @@
 # python imports
 import unittest
 
+from splitnode import (split_nodes_delimiter, split_nodes_image,
+                       split_nodes_link)
 # application imports
 from textnode import TextNode, TextType
-from splitnode import split_nodes_delimiter
 
 
 class TestSplitNode(unittest.TestCase):
@@ -68,6 +69,50 @@ class TestSplitNode(unittest.TestCase):
             new_nodes,
         )
 
+    def test_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.NORMAL,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.NORMAL),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.NORMAL),
+                TextNode("second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"),
+            ],
+            new_nodes,
+        )
+# TODO: Add more test cases for split_images:
+"""
+Initial test cases:
+========================
+No image links (should return input unchanged)
+Text with other markdown (like bold or italic, ignored here)
+Single image link
+Three image links
+Image link at start (no leading text)
+Image link at end (no trailing text)
 
+Additional test cases:
+=======================
+TextNode is not of type TextType.TEXT
+    Should return the node unchanged. Only TextType.TEXT should be processed.
+Image with unusual alt text
+    Alt text with punctuation, numbers, or parentheses: ![img #1](url)
+Image markdown with missing parts (broken syntax)
+    Missing closing ), or missing ![, etc. These shouldn’t match or should be ignored gracefully.
+Adjacent image links
+    Like: "![img1](url1)![img2](url2)" — no space in between. Should still split both.
+Newlines inside or around image markdown
+    Like: "Some text\n![alt](url)\nmore text" — confirm newlines are preserved.
+Same image repeated
+    Like: "![cat](link) and again ![cat](link)" — make sure it handles same content twice.
+Image inside sentence punctuation
+    Like: "This is ![img](url), and this too." — check punctuation doesn’t break things.
+"""
+
+# TODO: Add test cases for split_nodes_link
 if __name__ == "__main__":
     unittest.main()
