@@ -134,7 +134,7 @@ def split_nodes_image(old_nodes):
         for match in matches:
             image_alt, image_link = match
             parts = remaining_text.split(f"![{image_alt}]({image_link})", 1)
-            
+
             if parts[0]:
                 new_nodes.append(TextNode(parts[0], TextType.NORMAL))
             # Create a new TextNode for the image
@@ -143,9 +143,8 @@ def split_nodes_image(old_nodes):
         # If there's any remaining text after the last image, add it as a normal TextNode
         if remaining_text:
             new_nodes.append(TextNode(remaining_text, TextType.NORMAL))
-        
-    return new_nodes
 
+    return new_nodes
 
 
 def split_nodes_link(old_nodes):
@@ -185,7 +184,7 @@ def split_nodes_link(old_nodes):
             uri_alt, uri_link = match
             print(f"uri_alt: {uri_alt}, uri_link: {uri_link}")
             parts = remaining_text.split(f"[{uri_alt}]({uri_link})", 1)
-            
+
             if parts[0]:
                 new_nodes.append(TextNode(parts[0], TextType.NORMAL))
             # Create a new TextNode for the image
@@ -194,7 +193,7 @@ def split_nodes_link(old_nodes):
         # If there's any remaining text after the last image, add it as a normal TextNode
         if remaining_text:
             new_nodes.append(TextNode(remaining_text, TextType.NORMAL))
-        
+
     return new_nodes
 
 
@@ -223,7 +222,7 @@ def text_to_textnodes(text: str) -> list[TextNode]:
             TextNode(link, link, https://boot.dev)
         ]
 
-    """    
+    """
     nodes = [TextNode(text, TextType.NORMAL)]
 
     # Order matters: images and links should be split before emphasis

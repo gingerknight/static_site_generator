@@ -69,7 +69,7 @@ class TestSplitNode(unittest.TestCase):
             new_nodes,
         )
 
-# ========================= Tests for split_nodes_images =========================
+    # ========================= Tests for split_nodes_images =========================
     def test_split_images(self):
         node = TextNode(
             "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
@@ -85,7 +85,7 @@ class TestSplitNode(unittest.TestCase):
             ],
             new_nodes,
         )
-    
+
     def test_split_images_no_images(self):
         node = TextNode("This is text with no images", TextType.NORMAL)
         new_nodes = split_nodes_image([node])
@@ -106,7 +106,7 @@ class TestSplitNode(unittest.TestCase):
             ],
             new_nodes,
         )
-    
+
     def test_split_images_no_leading_text(self):
         node = TextNode("![image](https://i.imgur.com/zjjcJKZ.png) and some text", TextType.NORMAL)
         new_nodes = split_nodes_image([node])
@@ -136,12 +136,10 @@ class TestSplitNode(unittest.TestCase):
         node = TextNode("Bad image ![alt](https://img.com/image.png", TextType.NORMAL)
         new_nodes = split_nodes_image([node])
         self.assertListEqual(
-            [
-                TextNode("Bad image ![alt](https://img.com/image.png", TextType.NORMAL)
-            ],
+            [TextNode("Bad image ![alt](https://img.com/image.png", TextType.NORMAL)],
             new_nodes,
         )
-    
+
     def test_split_images_adjacent(self):
         node = TextNode("![img1](http://url1)![img2](https://url2)", TextType.NORMAL)
         new_nodes = split_nodes_image([node])
@@ -189,17 +187,16 @@ class TestSplitNode(unittest.TestCase):
             new_nodes,
         )
 
+    # TODO: Add more test cases for split_images:
+    # """
+    # Image with unusual alt text
+    #    Alt text with punctuation, numbers, or parentheses: ![img #1](url)
+    # Image markdown with missing parts (broken syntax)
+    #     Missing closing ), or missing ![, etc. These shouldn’t match or should be ignored gracefully.
+    # """
 
-# TODO: Add more test cases for split_images:
-# """
-# Image with unusual alt text
-#    Alt text with punctuation, numbers, or parentheses: ![img #1](url)
-# Image markdown with missing parts (broken syntax)
-#     Missing closing ), or missing ![, etc. These shouldn’t match or should be ignored gracefully.
-# """
-
-# TODO: Add test cases for split_nodes_link
-# ========================= Tests for split_nodes_links =========================
+    # TODO: Add test cases for split_nodes_link
+    # ========================= Tests for split_nodes_links =========================
     def test_split_links(self):
         node = TextNode(
             "This is text with an [good_link](https://the_mighty_googles.com/) and another [second link](https://the_mighty_youtubes.com/)",
@@ -215,7 +212,7 @@ class TestSplitNode(unittest.TestCase):
             ],
             new_nodes,
         )
-    
+
     def test_split_images_no_links(self):
         node = TextNode("This is text with no links", TextType.NORMAL)
         new_nodes = split_nodes_link([node])
@@ -236,7 +233,7 @@ class TestSplitNode(unittest.TestCase):
             ],
             new_nodes,
         )
-    
+
     def test_split_links_no_leading_text(self):
         node = TextNode("[golf_links](https://denison_county_golfclub.net) and some text", TextType.NORMAL)
         new_nodes = split_nodes_link([node])
@@ -261,17 +258,15 @@ class TestSplitNode(unittest.TestCase):
             ],
             new_nodes,
         )
-   
+
     def test_split_link_malformed(self):
         node = TextNode("Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL)
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
-            [
-                TextNode("Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL)
-            ],
+            [TextNode("Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL)],
             new_nodes,
         )
-    
+
     def test_split_links_adjacent(self):
         node = TextNode("[uri1](http://url1)[url2](https://url2)", TextType.NORMAL)
         new_nodes = split_nodes_link([node])
@@ -320,18 +315,21 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_text_to_nodes(self):
-        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        text = (
+            "This is **text** with an _italic_ word and a `code block` and an "
+            "![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        )
         nodes = [
-            TextNode("This is ", TextType.NORMAL, None), 
-            TextNode("text", TextType.BOLD, None), 
-            TextNode(" with an ", TextType.NORMAL, None), 
-            TextNode("italic", TextType.ITALIC, None), 
-            TextNode(" word and a ", TextType.NORMAL, None), 
-            TextNode("code block", TextType.CODE, None), 
-            TextNode(" and an ", TextType.NORMAL, None), 
-            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"), 
-            TextNode(" and a ", TextType.NORMAL, None), 
-            TextNode("link", TextType.LINK, "https://boot.dev")
+            TextNode("This is ", TextType.NORMAL, None),
+            TextNode("text", TextType.BOLD, None),
+            TextNode(" with an ", TextType.NORMAL, None),
+            TextNode("italic", TextType.ITALIC, None),
+            TextNode(" word and a ", TextType.NORMAL, None),
+            TextNode("code block", TextType.CODE, None),
+            TextNode(" and an ", TextType.NORMAL, None),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.NORMAL, None),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
         ]
         self.assertEqual(nodes, text_to_textnodes(text))
 
