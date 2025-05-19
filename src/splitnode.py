@@ -98,23 +98,6 @@ def extract_markdown_links(text):
     return matches
 
 
-"""
-node = TextNode(
-    "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
-    TextType.TEXT,
-)
-new_nodes = split_nodes_link([node])
-# [
-#     TextNode("This is text with a link ", TextType.TEXT),
-#     TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
-#     TextNode(" and ", TextType.TEXT),
-#     TextNode(
-#         "to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"
-#     ),
-# ]
-"""
-
-
 def split_nodes_image(old_nodes):
     """
     Takes a list of TextNode objects and splits them into separate nodes for images.
@@ -133,10 +116,11 @@ def split_nodes_image(old_nodes):
         #     TextNode("second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"),
         # ]
     """
+    new_nodes = []
     for node in old_nodes:
-        new_nodes = []
         # if not text.normal, pass through
         if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
             continue
         # Extaract the image links from the text
         matches = extract_markdown_images(node.text)
@@ -160,9 +144,93 @@ def split_nodes_image(old_nodes):
         if remaining_text:
             new_nodes.append(TextNode(remaining_text, TextType.NORMAL))
         
-        return new_nodes
+    return new_nodes
 
 
 
 def split_nodes_link(old_nodes):
-    return
+    """
+    Takes a list of TextNode objects and splits them into separate nodes for links.
+    It should return a list of TextNode objects, where each link is represented as a separate node.
+
+    Example:
+        node = TextNode(
+            "This is text with an [link](https://the_mighty_googles.com) and another [second link](https://the_mighty_youtubes.com)",
+            TextType.NORMAL,
+        )
+        new_nodes = split_nodes_link([node])
+        # [
+        #     TextNode("This is text with an ", TextType.TEXT),
+        #     TextNode("link", TextType.LINK, "https://the_mighty_googles.comg"),
+        #     TextNode(" and another ", TextType.TEXT),
+        #     TextNode("second image", TextType.LINK, "https://the_mighty_youtubes.com"),
+        # ]
+    """
+    new_nodes = []
+    for node in old_nodes:
+        # if not text.normal, pass through
+        if node.text_type != TextType.NORMAL:
+            new_nodes.append(node)
+            continue
+        # Extaract the image links from the text
+        matches = extract_markdown_links(node.text)
+        # If there are no valid markdown url links, return list with original TextNode
+        if not matches:
+            new_nodes.append(node)
+            continue
+        # If there are valid markdown url links, split the text into sections
+        # and create new TextNode objects for each link
+        remaining_text = node.text
+        for match in matches:
+            uri_alt, uri_link = match
+            print(f"uri_alt: {uri_alt}, uri_link: {uri_link}")
+            parts = remaining_text.split(f"[{uri_alt}]({uri_link})", 1)
+            
+            if parts[0]:
+                new_nodes.append(TextNode(parts[0], TextType.NORMAL))
+            # Create a new TextNode for the image
+            new_nodes.append(TextNode(uri_alt, TextType.LINK, uri_link))
+            remaining_text = parts[1] if len(parts) > 1 else ""
+        # If there's any remaining text after the last image, add it as a normal TextNode
+        if remaining_text:
+            new_nodes.append(TextNode(remaining_text, TextType.NORMAL))
+        
+    return new_nodes
+
+
+def text_to_textnodes(text: str) -> list[TextNode]:
+    """
+    Takes a string and returns a list of TextNode objects.
+    The function should handle different text types (normal, bold, italic, etc.) based on the delimiters.
+
+    Example:
+        text = (
+            "This is **text** with an _italic_ word and a `code block` "
+            "and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) "
+            "and a [link](https://boot.dev)"
+        )
+        nodes = text_to_textnodes(text)
+        [
+            TextNode(This is , text, None)
+            TextNode(text, bold, None)
+            TextNode( with an , text, None)
+            TextNode(italic, italic, None)
+            TextNode( word and a , text, None)
+            TextNode(code block, code, None)
+            TextNode( and an , text, None)
+            TextNode(obi wan image, image, https://i.imgur.com/fJRm4Vk.jpeg)
+            TextNode( and a , text, None)
+            TextNode(link, link, https://boot.dev)
+        ]
+
+    """    
+    nodes = [TextNode(text, TextType.NORMAL)]
+
+    # Order matters: images and links should be split before emphasis
+    nodes = split_nodes_image(nodes)
+    nodes = split_nodes_link(nodes)
+    nodes = split_nodes_delimiter(nodes, "**", TextType.BOLD)
+    nodes = split_nodes_delimiter(nodes, "_", TextType.ITALIC)
+    nodes = split_nodes_delimiter(nodes, "`", TextType.CODE)
+
+    return nodes
