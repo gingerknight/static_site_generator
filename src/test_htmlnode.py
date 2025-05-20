@@ -34,7 +34,9 @@ class TestHTMLNode(unittest.TestCase):
             {"href": "https://www.google.com", "target": "_blank"},
         )
         props_to_html_return = node.props_to_html()
-        self.assertEqual(props_to_html_return, ' href="https://www.google.com" target="_blank"')
+        self.assertEqual(
+            props_to_html_return, ' href="https://www.google.com" target="_blank"'
+        )
 
     def test_to_html_error(self):
         """
@@ -90,7 +92,9 @@ class TestParentNode(unittest.TestCase):
         grandchild_node = LeafNode("b", "grandchild")
         child_node = ParentNode("span", [grandchild_node])
         parent_node = ParentNode("div", [child_node])
-        self.assertEqual(parent_node.to_html(), "<div><span><b>grandchild</b></span></div>")
+        self.assertEqual(
+            parent_node.to_html(), "<div><span><b>grandchild</b></span></div>"
+        )
 
     def test_parentnode_to_html_with_multiple_children(self):
         child_node1 = LeafNode("b", "child one bold text")
