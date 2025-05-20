@@ -2,7 +2,12 @@
 # python imports
 import unittest
 
-from splitnode import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+from splitnode import (
+    split_nodes_delimiter,
+    split_nodes_image,
+    split_nodes_link,
+    text_to_textnodes,
+)
 
 # application imports
 from textnode import TextNode, TextType
@@ -81,7 +86,9 @@ class TestSplitNode(unittest.TestCase):
                 TextNode("This is text with an ", TextType.NORMAL),
                 TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
                 TextNode(" and another ", TextType.NORMAL),
-                TextNode("second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
             ],
             new_nodes,
         )
@@ -108,7 +115,9 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_images_no_leading_text(self):
-        node = TextNode("![image](https://i.imgur.com/zjjcJKZ.png) and some text", TextType.NORMAL)
+        node = TextNode(
+            "![image](https://i.imgur.com/zjjcJKZ.png) and some text", TextType.NORMAL
+        )
         new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
@@ -127,7 +136,9 @@ class TestSplitNode(unittest.TestCase):
         self.assertListEqual(
             [
                 TextNode("Check this ", TextType.NORMAL),
-                TextNode("an image: cat & dog", TextType.IMAGE, "https://img.com/catdog.png"),
+                TextNode(
+                    "an image: cat & dog", TextType.IMAGE, "https://img.com/catdog.png"
+                ),
             ],
             new_nodes,
         )
@@ -164,7 +175,10 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_images_same_image_repeated(self):
-        node = TextNode("![cat](https://cat_link) and again ![cat](https://cat_link)", TextType.NORMAL)
+        node = TextNode(
+            "![cat](https://cat_link) and again ![cat](https://cat_link)",
+            TextType.NORMAL,
+        )
         new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
@@ -176,7 +190,10 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_images_inside_sentence_punctuation(self):
-        node = TextNode("This is ![img](https://inside_the_mindhive_url), and this too.", TextType.NORMAL)
+        node = TextNode(
+            "This is ![img](https://inside_the_mindhive_url), and this too.",
+            TextType.NORMAL,
+        )
         new_nodes = split_nodes_image([node])
         self.assertListEqual(
             [
@@ -208,7 +225,9 @@ class TestSplitNode(unittest.TestCase):
                 TextNode("This is text with an ", TextType.NORMAL),
                 TextNode("good_link", TextType.LINK, "https://the_mighty_googles.com/"),
                 TextNode(" and another ", TextType.NORMAL),
-                TextNode("second link", TextType.LINK, "https://the_mighty_youtubes.com/"),
+                TextNode(
+                    "second link", TextType.LINK, "https://the_mighty_youtubes.com/"
+                ),
             ],
             new_nodes,
         )
@@ -235,11 +254,16 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_links_no_leading_text(self):
-        node = TextNode("[golf_links](https://denison_county_golfclub.net) and some text", TextType.NORMAL)
+        node = TextNode(
+            "[golf_links](https://denison_county_golfclub.net) and some text",
+            TextType.NORMAL,
+        )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
-                TextNode("golf_links", TextType.LINK, "https://denison_county_golfclub.net"),
+                TextNode(
+                    "golf_links", TextType.LINK, "https://denison_county_golfclub.net"
+                ),
                 TextNode(" and some text", TextType.NORMAL),
             ],
             new_nodes,
@@ -254,16 +278,27 @@ class TestSplitNode(unittest.TestCase):
         self.assertListEqual(
             [
                 TextNode("Check this ", TextType.NORMAL),
-                TextNode("a link for: cats & dogs", TextType.LINK, "https://the_bestest_friends_clubs.com"),
+                TextNode(
+                    "a link for: cats & dogs",
+                    TextType.LINK,
+                    "https://the_bestest_friends_clubs.com",
+                ),
             ],
             new_nodes,
         )
 
     def test_split_link_malformed(self):
-        node = TextNode("Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL)
+        node = TextNode(
+            "Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL
+        )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
-            [TextNode("Bad image [url_link](https://missing_Parens.com/image.png", TextType.NORMAL)],
+            [
+                TextNode(
+                    "Bad image [url_link](https://missing_Parens.com/image.png",
+                    TextType.NORMAL,
+                )
+            ],
             new_nodes,
         )
 
@@ -279,7 +314,9 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_links_with_newlines(self):
-        node = TextNode("Some text\n[newline](https://gottem)\nmore text", TextType.NORMAL)
+        node = TextNode(
+            "Some text\n[newline](https://gottem)\nmore text", TextType.NORMAL
+        )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
@@ -291,7 +328,9 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_links_same_image_repeated(self):
-        node = TextNode("[cat](https://cat_link) and again [cat](https://cat_link)", TextType.NORMAL)
+        node = TextNode(
+            "[cat](https://cat_link) and again [cat](https://cat_link)", TextType.NORMAL
+        )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
@@ -303,12 +342,17 @@ class TestSplitNode(unittest.TestCase):
         )
 
     def test_split_links_inside_sentence_punctuation(self):
-        node = TextNode("This is [mindhive link](https://inside_the_mindhive_url), and this too.", TextType.NORMAL)
+        node = TextNode(
+            "This is [mindhive link](https://inside_the_mindhive_url), and this too.",
+            TextType.NORMAL,
+        )
         new_nodes = split_nodes_link([node])
         self.assertListEqual(
             [
                 TextNode("This is ", TextType.NORMAL),
-                TextNode("mindhive link", TextType.LINK, "https://inside_the_mindhive_url"),
+                TextNode(
+                    "mindhive link", TextType.LINK, "https://inside_the_mindhive_url"
+                ),
                 TextNode(", and this too.", TextType.NORMAL),
             ],
             new_nodes,
@@ -327,7 +371,9 @@ class TestSplitNode(unittest.TestCase):
             TextNode(" word and a ", TextType.NORMAL, None),
             TextNode("code block", TextType.CODE, None),
             TextNode(" and an ", TextType.NORMAL, None),
-            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(
+                "obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"
+            ),
             TextNode(" and a ", TextType.NORMAL, None),
             TextNode("link", TextType.LINK, "https://boot.dev"),
         ]

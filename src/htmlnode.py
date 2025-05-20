@@ -73,4 +73,6 @@ class ParentNode(HTMLNode):
 
     def __repr__(self):
         # Optional but helpful for debugging
-        return f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
+        return (
+            f"ParentNode(tag={self.tag}, children={self.children}, props={self.props})"
+        )

@@ -36,11 +36,15 @@ def _split_node(node, delimiter, text_type):
         if i % 2 == 0:
             nodes_list.append(TextNode(text_part, TextType.NORMAL))
         else:
-            nodes_list.append(TextNode(text_part, SYMBOL_TO_TEXTTYPE.get(delimiter, text_type)))
+            nodes_list.append(
+                TextNode(text_part, SYMBOL_TO_TEXTTYPE.get(delimiter, text_type))
+            )
     return nodes_list
 
 
-def split_nodes_delimiter(old_nodes: list[TextNode], delimiter: str, text_type: TextType):
+def split_nodes_delimiter(
+    old_nodes: list[TextNode], delimiter: str, text_type: TextType
+):
     """Use:
     node = TextNode("This is text with a `code block` word", TextType.TEXT)
     new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)

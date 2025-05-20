@@ -46,11 +46,16 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.value, "Italics text node")
 
     def test_textnode_to_htmlnode_link(self):
-        node = TextNode("Click here phishing link!", TextType.LINK, "https://hackerwebs.com/")
+        node = TextNode(
+            "Click here phishing link!", TextType.LINK, "https://hackerwebs.com/"
+        )
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.value, "Click here phishing link!")
-        self.assertEqual(html_node.to_html(), '<a href="https://hackerwebs.com/">Click here phishing link!</a>')
+        self.assertEqual(
+            html_node.to_html(),
+            '<a href="https://hackerwebs.com/">Click here phishing link!</a>',
+        )
 
     def test_textnode_to_htmlnode_img(self):
         node = TextNode("This is an image", TextType.IMAGE, "https://www.boot.dev")
