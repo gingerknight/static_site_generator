@@ -80,9 +80,7 @@ This is another paragraph
         self.assertEqual(block_type, BlockType.QUOTE)
 
     def test_block_to_block_type_unordered_list(self):
-        block = (
-            "- This is an unordered list item\n- This is another unordered list item"
-        )
+        block = "- This is an unordered list item\n- This is another unordered list item"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.UNORDERED_LIST)
 

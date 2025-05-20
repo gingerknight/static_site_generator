@@ -25,3 +25,4 @@ warn_unused_ignores = true
 [tool.ruff]
 line-length = 120
 lint.extend-select = ["E501"]
+
