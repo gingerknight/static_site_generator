@@ -2,8 +2,8 @@
 # python imports
 import unittest
 
-from splitnode import (split_nodes_delimiter, split_nodes_image,
-                       split_nodes_link, text_to_textnodes)
+from splitnode import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes
+
 # application imports
 from textnode import TextNode, TextType
 

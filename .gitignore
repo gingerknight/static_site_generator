@@ -1,1 +1,10 @@
 __pycache__/
+.ruff_cache/
+.mypy_cache/
+.vscode/
+*.py[cod]
+.venv/
+.env/
+.env.*
+.pytest_cache/
+.cache/
