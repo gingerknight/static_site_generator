@@ -9,14 +9,13 @@ from splitblocks import BlockType
 
 
 class TestSplitMarkdown(unittest.TestCase):
-
-# <------ Test cases for the markdown_to_blocks function ------>
+    # <------ Test cases for the markdown_to_blocks function ------>
     def test_markdown_to_blocks(self):
         md = """
 This is **bolded** paragraph
 
 This is another paragraph with _italic_ text and `code` here
-This is the same paragraph on a new line
+This paragraph on a new line
 
 - This is a list
 - with items
@@ -26,7 +25,7 @@ This is the same paragraph on a new line
             blocks,
             [
                 "This is **bolded** paragraph",
-                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "This is another paragraph with _italic_ text and `code` here\nThis paragraph on a new line",
                 "- This is a list\n- with items",
             ],
         )
@@ -64,7 +63,7 @@ This is another paragraph
             ],
         )
 
-# <------ Test cases for the block_to_block_type function ------>
+    # <------ Test cases for the block_to_block_type function ------>
     def test_block_to_block_type_heading(self):
         block = "# This is a heading"
         block_type = block_to_block_type(block)
@@ -74,14 +73,17 @@ This is another paragraph
         block = "```\nprint('Hello, World!')\n```"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.CODE)
+
     def test_block_to_block_type_quote(self):
         block = "> This is a quote"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.QUOTE)
+
     def test_block_to_block_type_unordered_list(self):
         block = "- This is an unordered list item\n- This is another unordered list item"
         block_type = block_to_block_type(block)
         self.assertEqual(block_type, BlockType.UNORDERED_LIST)
+
     def test_block_to_block_type_ordered_list(self):
         block = "1. This is an ordered list item\n2. This is another ordered list item"
         block_type = block_to_block_type(block)

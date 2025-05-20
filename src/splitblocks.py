@@ -1,9 +1,9 @@
 # python imports
 import re
 from enum import Enum
-from typing import Optional
 
 # application imports
+
 
 # block type Enum
 class BlockType(Enum):
@@ -16,10 +16,11 @@ class BlockType(Enum):
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
 
+
 def block_to_block_type(block: str) -> BlockType:
     """
     Takes a single block of markdown text as input and returns the BlockType representing the type of block it is
-    
+
         - Headings start with 1-6 # characters, followed by a space and then the heading text.
         - Code blocks must start with 3 backticks and end with 3 backticks.
         - Quote block must start with a > character.
@@ -55,7 +56,6 @@ def block_to_block_type(block: str) -> BlockType:
         return BlockType.ORDERED_LIST
     # if none of the above, return paragraph
     return BlockType.PARAGRAPH
-
 
 
 def markdown_to_blocks(markdown: str) -> list[str]:
