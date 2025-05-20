@@ -8,9 +8,7 @@ from splitnode import extract_markdown_images, extract_markdown_links
 
 class TestExtractMarkdown(unittest.TestCase):
     def test_extract_markdown_images(self):
-        matches = extract_markdown_images(
-            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
-        )
+        matches = extract_markdown_images("This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)")
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
     def test_extract_multiple_images(self):
@@ -38,9 +36,7 @@ class TestExtractMarkdown(unittest.TestCase):
         matches = extract_markdown_links(
             "This is text with an [link](https://test_your_might.com/@ricketyrickety_wrecked)"
         )
-        self.assertListEqual(
-            [("link", "https://test_your_might.com/@ricketyrickety_wrecked")], matches
-        )
+        self.assertListEqual([("link", "https://test_your_might.com/@ricketyrickety_wrecked")], matches)
 
     def test_extract_multiple_links(self):
         text = "[Google](https://google.com) and [GitHub](https://github.com)"
