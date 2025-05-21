@@ -122,3 +122,50 @@ I'm a paragraph
             "<div><blockquote>This is a quote that is in blockquote form</blockquote>"
             "<p>I'm a paragraph > and I am a paragraph, not really</p></div>",
         )
+
+    def test_ulists(self):
+        md = """
+- This is a list
+- with items
+- and _more_ items
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ul><li>This is a list</li><li>with items</li><li>and <i>more</i> items</li></ul></div>",
+        )
+
+    def test_olists(self):
+        md = """
+1. I'm number 1
+2. sweet savory number 2
+3. "If you know, you know" - number 3
+4. "If you're not _first_, you're **last**" - number 4
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>I'm number 1</li><li>sweet savory number 2</li>"
+            '<li>"If you know, you know" - number 3</li>'
+            "<li>\"If you're not <i>first</i>, you're <b>last</b>\" - number 4</li></ol></div>",
+        )
+
+    def test_olist_and_ulist(self):
+        md = """
+1. I'm number 1
+2. sweet savory number 2
+
+- This is a list
+- with items
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><ol><li>I'm number 1</li><li>sweet savory number 2</li></ol>"
+            "<ul><li>This is a list</li><li>with items</li></ul></div>",
+        )

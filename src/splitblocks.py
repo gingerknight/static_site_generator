@@ -138,9 +138,9 @@ def block_to_html_node(block: str) -> HTMLNode:
         case BlockType.QUOTE:
             return blockquote_to_html_node(block)
         case BlockType.UNORDERED_LIST:
-            pass
+            return unordered_list_to_html_node(block)
         case BlockType.ORDERED_LIST:
-            pass
+            return ordered_list_to_html_node(block)
         case _:
             raise ValueError(f"Unknown block type: {block_type}")
 
@@ -203,16 +203,39 @@ def blockquote_to_html_node(block: str) -> HTMLNode:
 
 def unordered_list_to_html_node(block: str) -> HTMLNode:
     """
-    Takes a single block of markdown text as input and returns an HTMLNode representing the block.
+    Converts markdown unordered lists to HTMLNodes.
+    Unordered list blocks should be surrounded by a <ul> tag,
+    and each list item should be surrounded by a <li> tag.
     """
-    pass
+    ul_html_nodes = []
+    # This can be multiple lines of '- ' text, so we need to split it up
+    list_items = block.split("\n")
+    # Remove leading '- ' from each line
+    list_items = [item[2:] for item in list_items if item.startswith("- ")]
+    for item in list_items:
+        # Create a new HTMLNode for each list item
+        children = text_to_children(item)
+        ul_html_nodes.append(ParentNode("li", children))
+
+    return ParentNode("ul", ul_html_nodes)
 
 
 def ordered_list_to_html_node(block: str) -> HTMLNode:
     """
-    Takes a single block of markdown text as input and returns an HTMLNode representing the block.
+    Converts markdown ordered (numbered) lists to HTMLNodes.
+    Ordered list blocks should be surrounded by a <ol> tag,
+    and each list item should be surrounded by a <li> tag.
     """
-    pass
+    ol_html_nodes = []
+    # This can be multiple lines of '1. ' text, so we need to split it up
+    list_items = block.split("\n")
+    # Remove leading '1. ' from each line
+    list_items = [item[3:] for item in list_items if re.match(r"^\d+\.\s+", item)]
+    for item in list_items:
+        # Create a new HTMLNode for each list item
+        children = text_to_children(item)
+        ol_html_nodes.append(ParentNode("li", children))
+    return ParentNode("ol", ol_html_nodes)
 
 
 def paragraph_to_html_node(block: str) -> HTMLNode:
