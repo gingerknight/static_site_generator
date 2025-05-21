@@ -182,7 +182,6 @@ def split_nodes_link(old_nodes):
         remaining_text = node.text
         for match in matches:
             uri_alt, uri_link = match
-            print(f"uri_alt: {uri_alt}, uri_link: {uri_link}")
             parts = remaining_text.split(f"[{uri_alt}]({uri_link})", 1)
 
             if parts[0]:
