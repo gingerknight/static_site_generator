@@ -3,7 +3,7 @@ import re
 from enum import Enum
 
 # application imports
-from textnode import text_node_to_html_node
+from textnode import TextNode, TextType, text_node_to_html_node
 from htmlnode import HTMLNode, ParentNode
 from splitnode import text_to_textnodes
 
@@ -37,8 +37,9 @@ def block_to_block_type(block: str) -> BlockType:
     Returns:
         BlockType: The type of block represented by the input string.
     """
-    # regex for heading
-    heading_regex = re.compile(r"^(#{1,6})\s+")
+    block = block.strip()  # remove leading and trailing whitespace
+    # regex for heading block
+    heading_regex = re.compile(r"^#{1,6}\s+?")
     if re.match(heading_regex, block):
         return BlockType.HEADING
     # regex for code block
@@ -94,19 +95,12 @@ def markdown_to_html_node(markdown: str) -> ParentNode:
     """
     Converts a full markdown document into a single parent HTML node.
     The one parent should contain many child HTMLNode objects representing nested elements.
-
-    - Split the markdown into blocks (using the markdown_to_blocks function)
-    - Loop over each block:
-        - Determine the type of block (you already have a function for this)
-        - Based on the type of block, create a new HTMLNode with the proper data
+    The function should:
+    - Split the markdown into blocks using the markdown_to_blocks function.
+    - Create a list of HTMLNode objects for each block.
+        - For each block, determine the type of block using the block_to_block_type function.
+        - Based on the type of block, create a new HTMLNode with the proper data.
         - Assign the proper child HTMLNode objects to the block node.
-            I created a shared text_to_children(text) function that works for all block types.
-            It takes a string of text and returns a list of HTMLNodes that represent the inline
-            markdown using previously created functions (think TextNode -> HTMLNode).
-        - The "code" block is a bit of a special case: it should not do any inline markdown
-        parsing of its children. I didn't use my text_to_children function for this block type,
-        I manually made a TextNode and used text_node_to_html_node.
-
     - Make all the block nodes children under a single parent HTML node (which should just be a div) and return it.
     """
     # Split the markdown into blocks
@@ -131,10 +125,9 @@ def block_to_html_node(block: str) -> HTMLNode:
         case BlockType.PARAGRAPH:
             return paragraph_to_html_node(block)
         case BlockType.HEADING:
-            # level = block.count("#")
-            pass
+            return heading_to_html_node(block)
         case BlockType.CODE:
-            pass
+            return code_to_html_node(block)
         case BlockType.QUOTE:
             return blockquote_to_html_node(block)
         case BlockType.UNORDERED_LIST:
@@ -155,7 +148,6 @@ def text_to_children(text: str) -> list[HTMLNode]:
     children = []
     # Convert the text to TextNode objects
     text_nodes = text_to_textnodes(text)
-    print(f"text_nodes: {text_nodes}")
     # Convert the TextNode objects to HTMLNode objects
     for text_node in text_nodes:
         html_nodes = text_node_to_html_node(text_node)
@@ -167,18 +159,58 @@ def text_to_children(text: str) -> list[HTMLNode]:
 ## ============================================================== ##
 def heading_to_html_node(block: str) -> HTMLNode:
     """
-    Takes a single block of markdown text as input and returns an HTMLNode representing the block.
+    Takes a block string of markdown text as input. Determines the level of the heading
+    (h1, h2, h3, etc) based on the number of '#' characters at the start of the string.
+    Returns a ParentNode object with the tag "h1", "h2", etc. and the text as its children.
+    Args:
+        block (str): A block of text to be converted to a heading HTMLNode.
+    Returns:
+        ParentNode: A ParentNode object with the tag "h1", "h2", etc. and the text as its children.
+    Raises:
+        We dont raise value error because we regex look for # to determine block type
+        TODO: Raise error if count > 6
+    Note: We treat multiple lines of headings as a single heading within the same block.
     """
-    # Create a new HTMLNode for the heading
-    # level = block.count("#")
-    pass
+    heading_lines = block.split("\n")
+    # Get the level of the heading based on the number of '#' characters
+    for line in block.splitlines():
+        if line.startswith("#"):
+            i = 0
+            while i < len(line) and line[i] == "#":
+                i += 1
+            level = i
+            break
+    # Remove leading '#' from each line
+    heading_lines = [line.lstrip("#").strip() for line in heading_lines if line.startswith("#")]
+    # Join the lines back together
+    text = " ".join(heading_lines)
+    # get all the children nodes back from text_to_children
+    children = text_to_children(text)
+    # Create a new ParentNode for the heading
+    return ParentNode(f"h{level}", children)
 
 
 def code_to_html_node(block: str) -> HTMLNode:
     """
-    Takes a single block of markdown text as input and returns an HTMLNode representing the block.
+    Takes a block of code as input and returns a ParentNode object
+    with the tag "pre" and the code as its children.
+    Args:
+        block (str): A block of code to be converted to a code HTMLNode.
+    Returns:
+        ParentNode: A ParentNode object with the tag "pre" and the code as its children.
+    Raises:
+        ValueError: If the block is not a valid code block (does not start and end with "```").
+    Note: We assume that the code block is a single line of code.
     """
-    pass
+    if not block.startswith("```") or not block.endswith("```"):
+        raise ValueError("invalid code block")
+    text = block[4:-3]
+    text_node = TextNode(text, TextType.NORMAL)
+    child = text_node_to_html_node(text_node)
+    # Create a new ParentNode for the code block
+    code = ParentNode("code", [child])
+    # Wrap the code in a <pre> tag
+    return ParentNode("pre", [code])
 
 
 def blockquote_to_html_node(block: str) -> HTMLNode:

@@ -169,3 +169,47 @@ I'm a paragraph
             "<div><ol><li>I'm number 1</li><li>sweet savory number 2</li></ol>"
             "<ul><li>This is a list</li><li>with items</li></ul></div>",
         )
+
+    def test_headings(self):
+        md = """
+# This is a heading
+## This is a subheading
+### This is a sub-subheading
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>This is a heading This is a subheading This is a sub-subheading</h1></div>",
+        )
+
+    def test_multiple_headings(self):
+        md = """
+# This is a title
+
+## This is a subtitle
+
+### This is a basic sub-subtitle
+"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>This is a title</h1><h2>This is a subtitle</h2><h3>This is a basic sub-subtitle</h3></div>",
+        )
+
+    def test_code(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\n"
+            "the **same** even with inline stuff\n</code></pre></div>",
+        )
