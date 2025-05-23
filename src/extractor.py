@@ -44,7 +44,7 @@ def extract_title(markdown: str) -> str:
     return title
 
 
-def generate_pages_recursively(from_path, template_path, dest_root_path):
+def generate_pages_recursively(from_path, template_path, dest_root_path, basepath):
     logger.info(f"Generating from {from_path} to {dest_root_path} using {template_path}")
 
     if from_path.is_file() and from_path.suffix == ".md":
@@ -55,14 +55,14 @@ def generate_pages_recursively(from_path, template_path, dest_root_path):
         logger.info(f"Generating file {dest_path} from markdown {from_path}")
         dest_path.parent.mkdir(parents=True, exist_ok=True)
 
-        generate_page(from_path, template_path, dest_path)
+        generate_page(from_path, template_path, dest_path, basepath)
 
     elif from_path.is_dir():
         for item in from_path.iterdir():
-            generate_pages_recursively(item, template_path, dest_root_path)
+            generate_pages_recursively(item, template_path, dest_root_path, basepath)
 
 
-def generate_page(from_file_path, template_path, dest_file_path):
+def generate_page(from_file_path, template_path, dest_file_path, basepath):
     """
     Generate a single HTML page from a markdown file using a template.
     Args:
@@ -87,6 +87,9 @@ def generate_page(from_file_path, template_path, dest_file_path):
     title = extract_title(markdown)
     # Replace the placeholders in the template
     html = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
+    # Replace any instances of href="/ with href="{basepath}
+    html = html.replace('href="/', f'href="{basepath}')
+    html = html.replace('src="/', f'src="{basepath}')
     # Write the HTML to the destination file
     with open(dest_file_path, "w", encoding="utf-8") as f:
         f.write(html)

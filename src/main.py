@@ -4,6 +4,7 @@ import os
 import shutil
 from pathlib import Path
 import logging
+import argparse
 
 # application imports
 from log_config import setup_logging
@@ -63,10 +64,29 @@ def clean_up_public_dir(public_dir: str) -> None:
                 logger.info(f"Removed file {item}")
 
 
+def print_usage():
+    """
+    Print the usage instructions for the script.
+    Returns:
+        None
+    """
+    print("Usage: python3 main.py <basepath>")
+    print("basepath: The base path for the webpage. Default is '/'")
+    print("Example: python main.py /my_base_path")
+
 def main():
-    my_node = TextNode("Sample Text", TextType.LINK, "https://www.google.com")  # noqa: F841
-    # Clean up the public directory
-    public_dir = Path("public").resolve()
+    
+    parser = argparse.ArgumentParser(description="Generate HTML pages from markdown files.")
+    parser.add_argument(
+        "basepath",
+        type=str,
+        nargs="?",
+        default="/",
+        help="The base path for the webpage. Default is '/'",
+    )
+    args = parser.parse_args()
+
+    public_dir = Path("docs").resolve()
     if len(os.listdir(public_dir)) > 0:
         clean_up_public_dir(public_dir)
     # Copy the static directory to the public directory
@@ -75,10 +95,10 @@ def main():
 
     content_dir = Path("content")
     template_path = Path("template.html")
-    output_dir = Path("public")
+    output_dir = Path("docs")
 
     # Generate pages from markdown files
-    generate_pages_recursively(content_dir, template_path, output_dir)
+    generate_pages_recursively(content_dir, template_path, output_dir, args.basepath)
 
 
 main()
