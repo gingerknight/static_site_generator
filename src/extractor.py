@@ -1,6 +1,4 @@
-# imports here
 import os
-import shutil
 from pathlib import Path
 import logging
 
@@ -11,6 +9,7 @@ from splitblocks import markdown_to_html_node
 
 setup_logging()
 logger = logging.getLogger(__name__)
+
 
 def extract_title(markdown: str) -> str:
     """
@@ -45,33 +44,53 @@ def extract_title(markdown: str) -> str:
     # Return the extracted title
     return title
 
-def generate_page(from_path, template_path, dest_path):
+
+def generate_pages_recursively(from_path, template_path, dest_root_path):
+
+    logger.info(f"Generating from {from_path} to {dest_root_path} using {template_path}")
+
+    if from_path.is_file() and from_path.suffix == ".md":
+        # Get relative path and change suffix
+        relative_path = from_path.relative_to(Path("content")).with_suffix(".html")
+        dest_path = dest_root_path / relative_path
+
+        logger.info(f"Generating file {dest_path} from markdown {from_path}")
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+        generate_page(from_path, template_path, dest_path)
+
+    elif from_path.is_dir():
+        for item in from_path.iterdir():
+            generate_pages_recursively(item, template_path, dest_root_path)
+
+
+def generate_page(from_file_path, template_path, dest_file_path):
     """
-    Print a message like "Generating page from from_path to dest_path using template_path".
-    Read the markdown file at from_path and store the contents in a variable.
-    Read the template file at template_path and store the contents in a variable.
-    Use your markdown_to_html_node function and .to_html() method to convert the markdown file to an HTML string.
-    Use the extract_title function to grab the title of the page.
-    Replace the {{ Title }} and {{ Content }} placeholders in the template with the HTML and title you generated.
-    Write the new full HTML page to a file at dest_path. Be sure to create any necessary directories if they don't exist.
+    Generate a single HTML page from a markdown file using a template.
+    Args:
+        from_file_path (str): The source markdown file to generate the HTML page from.
+        template_path (str): The path to the HTML template file.
+        dest_file_path (str): The destination path to save the generated HTML file.
+    Returns:
+        None
     """
-    logger.info(f"Generating page from {from_path} to {dest_path} using {template_path}")
-    # Read the markdown file
-    with open(from_path, "r", encoding="utf-8") as f:
-        markdown = f.read()
+    logger.info(f"Generating page from {from_file_path} to {dest_file_path} using {template_path}")
     # Read the template file
-    with open(template_path, "r", encoding="utf-8") as f:
-        template = f.read()
+    template_path = Path(template_path).resolve()
+    with open(template_path, "r", encoding="utf-8") as template_file:
+        template = template_file.read()
+    
+    # Generate the page
+    with open(from_file_path, "r", encoding="utf-8") as f:
+        markdown = f.read()
     # Convert the markdown to HTML
     html = markdown_to_html_node(markdown).to_html()
     # Extract the title
     title = extract_title(markdown)
     # Replace the placeholders in the template
     html = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
-    # Create the destination directory if it doesn't exist
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     # Write the HTML to the destination file
-    with open(dest_path, "w", encoding="utf-8") as f:
+    with open(dest_file_path, "w", encoding="utf-8") as f:
         f.write(html)
-    logger.info(f"Generated page at {dest_path}")
-
+    logger.info(f"Generated page at {dest_file_path}")
+            

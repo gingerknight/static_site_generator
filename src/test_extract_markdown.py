@@ -33,7 +33,7 @@ class TestExtractMarkdown(unittest.TestCase):
 
     def test_extract_image_relative_path(self):
         text = "This is a local image ![local image](/images/local_image.png)"
-        expected = [('local image', '/images/local_image.png')]
+        expected = [("local image", "/images/local_image.png")]
         self.assertListEqual(expected, extract_markdown_images(text))
 
     ## -------------------------- Markdown Link Tests -------------------------- ##

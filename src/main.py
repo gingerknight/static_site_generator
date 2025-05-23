@@ -8,7 +8,7 @@ import time
 
 # application imports
 from log_config import setup_logging
-from extractor import generate_page
+from extractor import generate_pages_recursively
 
 
 setup_logging()
@@ -70,16 +70,16 @@ def main():
     public_dir = Path("public").resolve()
     if len(os.listdir(public_dir)) > 0:
         clean_up_public_dir(public_dir)
-    # sleep for 3 seconds
-    time.sleep(3)
     # Copy the static directory to the public directory
     static_dir = Path("static").resolve()
     copy_recursively(static_dir, public_dir)
-    # Generate the page
-    from_path = Path("content/index.md").resolve()
-    template_path = Path("template.html").resolve()
-    dest_path = Path("public/index.html").resolve()
-    generate_page(from_path, template_path, dest_path)
+    
+    content_dir = Path("content")
+    template_path = Path("template.html")
+    output_dir = Path("public")
+
+    # Generate pages from markdown files
+    generate_pages_recursively(content_dir, template_path, output_dir)
 
 
 main()
