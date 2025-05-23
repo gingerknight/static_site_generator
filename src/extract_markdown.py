@@ -17,8 +17,7 @@ def extract_markdown_images(text):
     :param text: markdown text
     :return __: list of tuples [(alt_text, url)]
     """
-
-    alt_uri_regex = re.compile(r"\!\[(.*?)\]\((htt.*?)\)")
+    alt_uri_regex = re.compile(r"!\[([^\[\]]*)\]\(([^\(\)]*)\)")
     matches = re.findall(alt_uri_regex, text)
     return matches
 
@@ -35,6 +34,6 @@ def extract_markdown_links(text):
     :return __: list of tuples
     """
 
-    alt_uri_link_regex = re.compile(r"(?<!\!)\[(.*?)\]\((https?:\/\/[^\s)]+)\)")
+    alt_uri_link_regex = re.compile(r"(?<!!)\[([^\[\]]*)\]\(([^\(\)]*)\)")
     matches = re.findall(alt_uri_link_regex, text)
     return matches
