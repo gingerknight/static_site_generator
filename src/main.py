@@ -4,7 +4,6 @@ import os
 import shutil
 from pathlib import Path
 import logging
-import time
 
 # application imports
 from log_config import setup_logging
@@ -73,7 +72,7 @@ def main():
     # Copy the static directory to the public directory
     static_dir = Path("static").resolve()
     copy_recursively(static_dir, public_dir)
-    
+
     content_dir = Path("content")
     template_path = Path("template.html")
     output_dir = Path("public")

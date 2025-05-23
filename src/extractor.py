@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 import logging
 
@@ -46,7 +45,6 @@ def extract_title(markdown: str) -> str:
 
 
 def generate_pages_recursively(from_path, template_path, dest_root_path):
-
     logger.info(f"Generating from {from_path} to {dest_root_path} using {template_path}")
 
     if from_path.is_file() and from_path.suffix == ".md":
@@ -79,7 +77,7 @@ def generate_page(from_file_path, template_path, dest_file_path):
     template_path = Path(template_path).resolve()
     with open(template_path, "r", encoding="utf-8") as template_file:
         template = template_file.read()
-    
+
     # Generate the page
     with open(from_file_path, "r", encoding="utf-8") as f:
         markdown = f.read()
@@ -93,4 +91,3 @@ def generate_page(from_file_path, template_path, dest_file_path):
     with open(dest_file_path, "w", encoding="utf-8") as f:
         f.write(html)
     logger.info(f"Generated page at {dest_file_path}")
-            
